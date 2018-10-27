@@ -1,3 +1,3 @@
-# CSE551
+# CSE539
 
-This is a repo for our CSE551 AES project
+This is a repo for our CSE539 AES project
