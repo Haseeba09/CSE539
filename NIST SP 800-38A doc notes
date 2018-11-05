@@ -1,0 +1,37 @@
+NIST 800-38A Doc notes:
+    - use approved underlying symmetric key block cipher alg.
+    - The cryptographic key regulates the functioning of the block cipher algorithm and, thus, by extension, regulates the functioning of the mode. The specifications of the block cipher and algorithms and the modes are public, so the security of the mode depends, at a minimum, on the secrecy of the key. 
+    - includes: ECB, CBC, CFB, OFB and CTR
+    - plaintext represented as a sequence of bit strings
+    - length of bit strings - ECB & CBC = multiple of block size; CFB - multiple of a parameter s <= block size; OFB & CTR - need not to be a multiple of blcok size [(n-1)b+u, 1<=u<=b], last bit string may not be a complete block
+   
+    - For the ECB, CBC, and CFB modes, the plaintext must be a sequence of one or more complete data blocks 
+    
+    - In the CFB, OFB, and CTR modes, the bit error(s) in the decrypted ciphertext block (or segment) occur in the same bit position(s) as in the ciphertext block (or segment); the other bit positions are not affected. In the ECB and CBC modes, a bit error may occur, independently, in any bit position of the decrypted ciphertext block, with an expected error rate of fifty percent, depending on the strength of the underlying block cipher. 
+    
+    ECB - bad (from class), fixed cipher assigned to plain text, enc and dec in parallel
+        - enc and dec in parallel
+        
+    CBC - seems one of the safest, but padding required, IV for first block, bit error can affect next segments, IV bit error only affect first block
+        - combining (“chaining”) of the plaintext blocks with the previous ciphertext blocks
+        - dec in parallel
+        - IV must be unpredicatable
+        - use Fk(.) to generate IV or FIPS random # generator
+        
+    CFB - most complicated (discarding b-s bits etc)
+        - feedback of successive ciphertext segments into the input blocks of the forward cipher to generate output blocks that are exclusive-ORed with the plaintext to produce the ciphertext
+        - also requires integer parameter
+        - dec in parallel
+        - IV must be unpredicatable
+        - use Fk(.) to generate IV or FIPS random # generator
+        
+    OFB - good alternative to CBC not requiring padding, bit error only affects same block, IV bit error affect every block
+        - iteration of the forward cipher on an IV to generate a sequence of output blocks that are exclusive-ORed with the plaintext to produce the ciphertext
+        - IV does not need to be unpredictable (a nounce-counter, message #, etc)
+        - must not be used for more than one message
+        
+    CTR - possibility of breaking the incrementing function
+        - complex to make it secure
+        - each block most be unique
+        - application of the forward cipher to a set of input blocks, called counters, to produce a sequence of output blocks that are exclusive-ORed with the plaintext to produce the ciphertext
+        - enc and dec in parallel
