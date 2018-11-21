@@ -1,0 +1,38 @@
+Methods needed:
+
+- main - (Haseeb)
+
+- AES main (encrypt and decrypt) - 
+
+- cipher:
+    - AddRoundKey - (Haseeb)
+    - SubBytes - done (Shartak)
+    - ShiftRows - done (Haseeb)
+    - MixColumns - done (Paul)
+    
+- Key Expansion:
+    - SubWord
+    - RotWord
+    - Rcon
+
+- Inverse Cipher:
+    - InvShiftRows - done (Shartak)
+    - InvSubBytres - done (Haseeb)
+    - InvMixColumns - done (Paul)
+    - AddRoundKey (already covered in cipher code)
+    
+    
+128 bit key, 128 bit blocks 
+
+- OFB (encrypt and decrupt) - (Shartak)
+
+- Report:
+    - Introduction
+    - Implementation Description
+    - Crypto learning
+    - Secure coding
+    - SUmmary
+    - References
+    - Appendix A - documented code
+    - Appendix B - list of crypto coding practices
+    - Appendix C - list of secure coding practices
