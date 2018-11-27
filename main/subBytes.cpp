@@ -1,7 +1,6 @@
 #include <iostream>
+#include "subbytes.h"
 using namespace std;
-
-void subBytes(unsigned char x[][4], bool inv);
 
 unsigned char sBox[256] =   {
 
@@ -44,14 +43,14 @@ unsigned char sInvBox[256] = {
 };
 
 /* Perform the sub byte operation using the s-box */
-void subBytes(unsigned char x[][4], bool inv)
+void subBytes(unsigned char state[][4], bool inv)
 {
 	if(inv){
 		for(int i=0; i<4; ++i)
         {
             for(int j=0 ;j<4 ;++j)
             {
-                x[i][j] = sInvBox[(x[i][j])];
+                state[i][j] = sInvBox[(state[i][j])];
             }
         }
 	}
@@ -60,7 +59,7 @@ void subBytes(unsigned char x[][4], bool inv)
         {
             for(int j=0 ;j<4 ;++j)
             {
-                x[i][j] = sBox[(x[i][j])];
+                state[i][j] = sBox[(state[i][j])];
             }
         }
 	}
