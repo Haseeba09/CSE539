@@ -1,155 +1,82 @@
-#include <iostream>
-#include <string>
+// CSE539 project - Paul Simerda
+// professor Bazzi
+
+// AES implementation
+
+#include "AES.h"
 #include "mixcolumns.h"
 #include "shiftrows.h"
 #include "subbytes.h"
+#include "AddRoundKey.h"
 
-using namespace std;
+void Cipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[Nb*(Nr+1)][4]) {
 
-struct CommandLineException
-{
-    CommandLineException(int m,int a)
-    {
-        cout << "\nToo many arguments on the command line.\n";
-        cout << m << " argument(s) are permitted on the command line.\n";
-        cout << a << " argument(s) appeared on the command line.\n";
-    }
-};
+	unsigned char state[4][4];
 
-int main(int argc, char* argv[]){
-    /*
-    manage command line arguments as:
-    "$a.exe [encrypt/decrypt]~ [key]~"
-    if 2 are not presented, ask user for each 
-    */
-    try{
-        bool decryptFlag = false;
-        string flagString;
-        bool validInput = true;
-        string message;
-        string key;
-        switch(argc){
-            case 1:
-                //get flag for Encrypt vs Decrypt
-                do{
-                    cout << "Enter 'decrypt' or 'encrypt'" << endl;                
-                    cin >> flagString;
-                    //FIX THIS ->
-                    for(int i=0; flagString[i]; i++){
-                        flagString[i] = tolower(flagString[i]);
-                    }
-                    if(flagString == "encrypt"){
-                        decryptFlag = false;
-                        validInput = true;
-                    }
-                    else if (flagString == "decrypt"){
-                        decryptFlag = false;
-                        validInput = true;
-                    }
-                    else{
-                        cout<<"Invalid input"<<endl;
-                        validInput = false;
-                    }
-                } while (!validInput);
+	//transforming input byte into a 2D block 
+	for (int row = 0; row < (sizeof(state)/sizeof(state[0])); row++) {
+		for (int col = 0; col < (sizeof(state[0])/sizeof(char)); col++) {
+			state[row][col] = in[row*col];
+		}
+	}
 
-                cout << "Enter key followed by \"~\":" <<endl;
-                getline(cin, key, '~');
+	addRoundKey(state, word, 0);
 
-                cout << "Enter message followed by \"~\" to " << flagString << ":" << endl;
-                getline(cin, message, '~');
+	for(int round = 1; round<=Nr-1; round++) { //round = 1 step 1 to Nr–1
+		subBytes(state, false); 
+		shiftRows(state, false);
+		MixColumns(state, false);
+		addRoundKey(state, word, round);
+	}
 
-                break;
-            case 2:
-                flagString = argv[1];
-                do{
-                    for(int i=0; flagString[i]; i++){
-                        flagString[i] = tolower(flagString[i]);
-                    }
-                    if(flagString == "encrypt"){
-                        decryptFlag = false;
-                        validInput = true;
-                    }
-                    else if (flagString == "decrypt"){
-                        decryptFlag = false;
-                        validInput = true;
-                    }
-                    else{
-                        cout<<"Invalid input"<<endl;
-                        validInput = false;
-                        cout << "Enter 'decrypt' or 'encrypt'" << endl;                
-                        cin >> flagString;
-                    }
-                } while (!validInput);
-                cout << "Enter key followed by \"~\":" <<endl;
-                getline(cin, key, '~');
-                cout << "Enter message followed by \"~\" to " << flagString << ":" << endl;
-                getline(cin, message, '~');
-                break;
-            case 3:
-                flagString = argv[1];
-                do{
-                    for(int i=0; flagString[i]; i++){
-                        flagString[i] = tolower(flagString[i]);
-                    }
-                    if(flagString == "encrypt"){
-                        decryptFlag = false;
-                        validInput = true;
-                    }
-                    else if (flagString == "decrypt"){
-                        decryptFlag = false;
-                        validInput = true;
-                    }
-                    else{
-                        cout<<"Invalid input"<<endl;
-                        validInput = false;
-                        cout << "Enter 'decrypt' or 'encrypt'" << endl;                
-                        cin >> flagString;
-                    }
-                } while (!validInput);
-                key = argv[2];
-                cout << "Enter message followed by \"~\":" <<endl;
-                getline(cin, message, '~');
-                break;
-            case 4:
-                flagString = argv[1];
-                do{
-                    for(int i=0; flagString[i]; i++){
-                        flagString[i] = tolower(flagString[i]);
-                    }
-                    if(flagString == "-encrypt"){
-                        decryptFlag = false;
-                        validInput = true;
-                    }
-                    else if (flagString == "decrypt"){
-                        decryptFlag = false;
-                        validInput = true;
-                    }
-                    else{
-                        cout<<"Invalid input"<<endl;
-                        validInput = false;
-                        cout << "Enter 'decrypt' or 'encrypt'" << endl;                
-                        cin >> flagString;
-                    }
-                } while (!validInput);
-                key = argv[2];
-                message = argv[3];
-                break;
-            default:
-                throw CommandLineException(4,argc-1);
-                break;
-        }
-        /*
-        i didnt think this far ahead when I started writing this...
-        I guess this is where we would pass all our info into a mode
-        of operation to break the message into the appropriate size
-        */
-        cout<<flagString<<" "<<key<< " "<<message<<endl;
-    }
-    catch(...){
-        cout<<"Program Terminated!"<<endl;
-        exit(EXIT_FAILURE);
-    }
+	subBytes(state, false);
+	shiftRows(state, false);
+	addRoundKey(state, word, Nr);
+
+	//transforming 2D block into output byte 
+	for (int row = 0; row < (sizeof(state) / sizeof(state[0])); row++) {
+		for (int col = 0; col < (sizeof(state[0]) / sizeof(char)); col++) {
+			out[row*col] = state[row][col];
+		}
+	}
+}
 
 
-    return 0;
+void InvCipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[Nb*(Nr+1)]) {
+
+	unsigned char state[4][4];
+
+	//transforming input byte into a 2D block 
+	for (int row = 0; row < (sizeof(state) / sizeof(state[0])); row++) {
+		for (int col = 0; col < (sizeof(state[0]) / sizeof(char)); col++) {
+			state[row][col] = in[row*col];
+		}
+	}
+
+	//AddRoundKey(state, w[10*4, (10 + 1)*4 - 1], false); // See Sec. 5.1.4
+
+	for (int round = Nr-1; round>=1; round--) {//round = Nr - 1 step - 1 downto 1
+
+		shiftRows(state, true); // See Sec. 5.3.1
+
+		subBytes(state, true); // See Sec. 5.3.2
+
+		//AddRoundKey(state, w[i * 4, (i + 1) * 4 - 1], true);
+
+		MixColumns(state, true); // See Sec. 5.3.3
+
+	}
+
+	shiftRows(state, true);
+
+	subBytes(state, true);
+
+	//AddRoundKey(state, word[0, 4 - 1]);
+
+	//transforming 2D block into output byte 
+	for (int row = 0; row < (sizeof(state) / sizeof(state[0])); row++) {
+		for (int col = 0; col < (sizeof(state[0]) / sizeof(char)); col++) {
+			out[row*col] = state[row][col];
+		}
+	}
 }
