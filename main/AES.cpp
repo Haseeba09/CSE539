@@ -42,7 +42,7 @@ void Cipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[
 }
 
 
-void InvCipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[Nb*(Nr+1)]) {
+void InvCipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[Nb*(Nr+1)][4]) {
 
 	unsigned char state[4][4];
 
@@ -53,25 +53,22 @@ void InvCipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char wo
 		}
 	}
 
-	//AddRoundKey(state, w[10*4, (10 + 1)*4 - 1], false); // See Sec. 5.1.4
+	// word from: Nr*Nb -> (Nr+1)*Nb-1
+	addRoundKey(state, word, Nr*Nb);	//Nr*Nb = 40
 
 	for (int round = Nr-1; round>=1; round--) {//round = Nr - 1 step - 1 downto 1
 
-		shiftRows(state, true); // See Sec. 5.3.1
-
-		subBytes(state, true); // See Sec. 5.3.2
-
-		//AddRoundKey(state, w[i * 4, (i + 1) * 4 - 1], true);
-
-		MixColumns(state, true); // See Sec. 5.3.3
-
+		shiftRows(state, true); 
+		subBytes(state, true); 
+		// words from: round*Nb -> (round+1)*Nb-1
+		addRoundKey(state, word, round*Nb); 
+		MixColumns(state, true); 
 	}
 
 	shiftRows(state, true);
-
 	subBytes(state, true);
-
-	//AddRoundKey(state, word[0, 4 - 1]);
+	//words from: 0 -> Nb-1
+	addRoundKey(state, word, 0);
 
 	//transforming 2D block into output byte 
 	for (int row = 0; row < (sizeof(state) / sizeof(state[0])); row++) {
