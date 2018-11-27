@@ -1,13 +1,14 @@
 #include <iostream>
 using namespace std;
 
-unsigned char partialKeyGen(int p, int q,unsigned long long int x);
+unsigned char partialKeyGen(int p, int q,unsigned long long x);
 
 int main(){
     int p = 5651;
     int q = 5623;
-    unsigned long long int x = 2;
-    unsigned char key[16];
+    unsigned long long  x = 123;
+
+    unsigned char key[30];
     
     key[0] = partialKeyGen(p,q,x);
 
@@ -22,12 +23,12 @@ int main(){
     return 0;
 }
 
-unsigned char partialKeyGen(int p, int q, unsigned long long int x){
+unsigned char partialKeyGen(int p, int q, unsigned long long  x){
     unsigned char partialKey = 0x00;
     int M = p*q;
 
     for(int i=0; i<8; i++){
-        unsigned long long int temp = x;
+        unsigned long long  temp = x;
         int output = 0;
         temp = temp*temp;
         cout<<"temp: "<<temp<<endl;
