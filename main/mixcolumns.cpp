@@ -4,16 +4,11 @@
 //Mixcolumns functionality
 
 #include "mixcolumns.h";
+#include "multiplication.h";
 
 //Function prototypes
 void MixCol(unsigned char(&col)[4]);
 void InvMixCol(unsigned char(&col)[4]);
-unsigned char multiplyBy2(unsigned char element);
-unsigned char multiplyBy3(unsigned char element);
-unsigned char multiplyBy9(unsigned char element);
-unsigned char multiplyBy11(unsigned char element);
-unsigned char multiplyBy13(unsigned char element);
-unsigned char multiplyBy14(unsigned char element);
 
 //Global matrix used for mulitiplication in transformation
 const int mixMatrix[4][4] = {{2, 3, 1, 1},
@@ -27,13 +22,13 @@ const int invMixMatrix[4][4] = { {14, 11, 13, 9},
 								{11, 13, 9, 14} };
 
 //Traverses given AES matrix by columns
-void MixColumns(unsigned char (&matrixA)[4][4], bool inverse) {
+void MixColumns(unsigned char state[][4], bool inverse) {
 	unsigned char tempCol[4];
 
 	for (int i = 0; i < 4; i++) {
 		//access column to be transformed
 		for (int j = 0; j < 4; j++) {
-			tempCol[j] = matrixA[j][i];			
+			tempCol[j] = state[j][i];			
 		}
 
 		if (inverse) {
@@ -45,7 +40,7 @@ void MixColumns(unsigned char (&matrixA)[4][4], bool inverse) {
 
 		//write transformed column back into matrix
 		for (int k = 0; k < 4; k++) {
-			matrixA[k][i] = tempCol[k];
+			state[k][i] = tempCol[k];
 		}
 
 	}
@@ -99,41 +94,4 @@ void MixCol(unsigned char(&col)[4]) {
 	for (int k = 0; k < 4; k++) {
 		col[k] = tempCol[k];
 	}
-}
-
-//Performs multiplication by 2
-unsigned char multiplyBy2(unsigned char element) {
-	unsigned char tempElem = element;
-	//perform a left shift
-	tempElem = tempElem << 1;
-	//if leftmost element is a one XOR with 0x1b
-	if (element & (1 << (8 - 1))) {
-		tempElem ^= 0x1b;
-		return tempElem;
-	}
-	else {
-		return tempElem;
-	}
-}
-
-//Performs multiplication by 3 by dividing multiplication into multiplying 
-// by 2 and by 1 and XORing the result
-unsigned char multiplyBy3(unsigned char element) {
-	return multiplyBy2(element) ^ element;
-}
-
-unsigned char multiplyBy9(unsigned char element) {
-	return multiplyBy2(multiplyBy2(multiplyBy2(element))) ^ element;
-}
-
-unsigned char multiplyBy11(unsigned char element) {
-	return multiplyBy2(multiplyBy2(multiplyBy2(element)) ^ element) ^ element;
-}
-
-unsigned char multiplyBy13(unsigned char element) {
-	return multiplyBy2(multiplyBy2(multiplyBy3(element))) ^ element;
-}
-
-unsigned char multiplyBy14(unsigned char element) {
-	return multiplyBy2(multiplyBy2(multiplyBy3(element)) ^ element);
 }
