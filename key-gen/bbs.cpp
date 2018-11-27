@@ -1,71 +1,48 @@
 #include <iostream>
 using namespace std;
 
-string partialKeyGen(int p, int q,unsigned long long x);
+string keyGen(int p, int q,unsigned long long x);
 
 int main(){
     int p = 5651;
     int q = 5623;
-    unsigned long long  x = 123;
+    unsigned long long  x = 12;
 
     string key;
     
-    key = partialKeyGen(p,q,x);
+    key = keyGen(p,q,x);
     cout<<key<<endl;
 
     return 0;
 }
 
-string partialKeyGen(int p, int q, unsigned long long  x){
+string keyGen(int p, int q, unsigned long long  x){
     string key = "";
     int M = p*q;
     int binaryKey[128];
     int brokenUpBinaryKey[16][8];
     unsigned char partialKey[16];
 
+    //Get random bits using BBS
     for(int i=0; i<128; i++){
         unsigned long long  temp = x;
         int output = 0;
         temp = temp*temp;
-        //cout<<"temp: "<<temp<<endl;
         x = temp % M;
         output = x%2;
         binaryKey[i] = output;
-        // int exponent=1;
-        // for(int n=0; n<i; n++){
-        //     exponent *=2;
-        // }
-        // partialKey += output*exponent;
     }
-    
-    for(int i=0; i<128; i++){
-        cout<<binaryKey[i];
-    }
+    //Break up binary key into 16 peices of 8 bits
     int n =0;
     for(int i=0; i<128; i++){        
         if(i>1 && i%8 == 0){
             n++;
         }
-        brokenUpBinaryKey[n][i%8] = binaryKey[i];
-        // cout<<"\n binKey = "<<binaryKey[i];
-        // cout<<"\n broken"<<n<<" "<<i%8<<" = "<<brokenUpBinaryKey[n][i%8];        
+        brokenUpBinaryKey[n][i%8] = binaryKey[i];       
     }
-    cout<<endl;
-    cout<<"next"<<endl;
-
-    for(int i =0; i<16; i++){
-        for(int n=0; n<8; n++){
-            cout<<brokenUpBinaryKey[i][n];
-        }
-        
-    }
-    cout<<endl;
-
+    //and each peice of the key to a byte array, converting from
+    //binary to dec
     for(int i=0; i<16; i++){
-        // int exponent=1;
-        // for(int n=0; n<i; n++){
-        //     exponent *=2;
-        // }
         partialKey[i] = 0;
         for(int n=0; n<8; n++){
             int exponent=1;
@@ -74,15 +51,11 @@ string partialKeyGen(int p, int q, unsigned long long  x){
             }
             partialKey[i] += brokenUpBinaryKey[i][n]*exponent;
         }
-    cout<<partialKey[i]<<endl;
     }
-
+    //concatenate each byte into a string
     for(int i=0; i<16; i++){
         key+=partialKey[i];
     }
-    
-
-
 
     return key;
 }
