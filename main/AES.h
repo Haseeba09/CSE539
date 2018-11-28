@@ -1,3 +1,4 @@
+//SECURE CODING: DCL51-CPP. Do not declare or define a reserved identifier
 #ifndef AES_H
 #define AES_H
 #include "keyexpansion.h"

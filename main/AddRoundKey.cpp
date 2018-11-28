@@ -13,6 +13,8 @@ void addRoundKey(unsigned char state[4][4], unsigned char word[][4], int round)
 		for (int byte = 0; byte < 4; byte++) {
 			state[byte][col] ^= word[i][byte];
 		}
+		//SECURE CODING: EXP50-CPP. Do not depend on the order of evaluation 
+		//for side effects
 		col++;
 	}
 

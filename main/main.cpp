@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <random>
 #include "KeyGen.h"
 #include "ofb.h"
 
@@ -33,7 +34,8 @@ int main(int argc, char* argv[]){
             case 1:
                 //get flag for Encrypt vs Decrypt
                 do{
-                    cout << "Enter 'decrypt' or 'encrypt'" << endl;                
+                    cout << "Enter 'decrypt' or 'encrypt'" << endl;
+                    //SECURE CODING: STR50-CPP. Guarantee that storage for strings has sufficient space                 
                     cin >> flagString;
                     for(int i=0; flagString[i]; i++){
                         flagString[i] = tolower(flagString[i]);
@@ -53,6 +55,7 @@ int main(int argc, char* argv[]){
                 } while (!validInput);
 
                 cout << "Enter message followed by \"~\" to " << flagString << ":" << endl;
+                //SECURE CODING: STR50-CPP. Guarantee that storage for strings has sufficient space 
                 getline(cin, message, '~');
 
                 break;
@@ -73,11 +76,13 @@ int main(int argc, char* argv[]){
                     else{
                         cout<<"Invalid input"<<endl;
                         validInput = false;
-                        cout << "Enter 'decrypt' or 'encrypt'" << endl;                
+                        cout << "Enter 'decrypt' or 'encrypt'" << endl;
+                        //SECURE CODING: STR50-CPP. Guarantee that storage for strings has sufficient space                 
                         cin >> flagString;
                     }
                 } while (!validInput);
                 cout << "Enter message followed by \"~\" to " << flagString << ":" << endl;
+                //SECURE CODING: STR50-CPP. Guarantee that storage for strings has sufficient space 
                 getline(cin, message, '~');
                 break;
             case 3:
@@ -97,13 +102,15 @@ int main(int argc, char* argv[]){
                     else{
                         cout<<"Invalid input"<<endl;
                         validInput = false;
-                        cout << "Enter 'decrypt' or 'encrypt'" << endl;                
+                        cout << "Enter 'decrypt' or 'encrypt'" << endl;
+                        //SECURE CODING: STR50-CPP. Guarantee that storage for strings has sufficient space                 
                         cin >> flagString;
                     }
                 } while (!validInput);
                 message = argv[2];
                 break;
             default:
+                //SECURE CODING: ERR50-CPP. Do not abruptly terminate the program
                 throw CommandLineException(4,argc-1);
                 break;
         }
@@ -119,6 +126,7 @@ int main(int argc, char* argv[]){
             if(keyFile.is_open()){
                 getline(keyFile, key);
             }
+            //SECURE CODING: FIO51-CPP. Close files when they are no longer needed
             keyFile.close();
         }
         else{
@@ -131,10 +139,12 @@ int main(int argc, char* argv[]){
                 int prime2 = 5623;
                 //Need random seed
                 unsigned long long int seed = 13;
-
+                //SECURE CODING: MSC51-CPP. Ensure your random number generator is properly seeded
+                //Not followed! Attempted to use random_device, but did not get random seed
                 key = keyGen(prime1, prime2, seed);
 
                 newKeyFile << key;
+                //SECURE CODING: FIO51-CPP. Close files when they are no longer needed
                 newKeyFile.close();
             }
         }
@@ -144,6 +154,7 @@ int main(int argc, char* argv[]){
             if(ivFile.is_open()){
                 getline(ivFile, iv);
             }
+            //SECURE CODING: FIO51-CPP. Close files when they are no longer needed
             ivFile.close();
         }
         else{
@@ -156,10 +167,12 @@ int main(int argc, char* argv[]){
                 int prime2 = 5623;
                 //Need random seed
                 unsigned long long int seed = 21;
-
+                //SECURE CODING: MSC51-CPP. Ensure your random number generator is properly seeded
+                //Not followed! Attempted to use random_device, but did not get random seed
                 iv = keyGen(prime1, prime2, seed);
 
                 newIvFile << iv;
+                //SECURE CODING: FIO51-CPP. Close files when they are no longer needed
                 newIvFile.close();
             }
         }
@@ -173,14 +186,15 @@ int main(int argc, char* argv[]){
             ivArray[i] = iv[i];
         }
 
-        unsigned char keyArray1[] = {0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c};
-        unsigned char messageArray1[] ={0x32, 0x43, 0xf6, 0xa8, 
-									0x88, 0x5a, 0x30, 0x8d, 
-									0x31, 0x31, 0x98, 0xa2, 
-									0xe0, 0x37, 0x07, 0x34};
+        // unsigned char keyArray1[] = {0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c};
+        // unsigned char messageArray1[] ={0x32, 0x43, 0xf6, 0xa8, 
+		// 							0x88, 0x5a, 0x30, 0x8d, 
+		// 							0x31, 0x31, 0x98, 0xa2, 
+		// 							0xe0, 0x37, 0x07, 0x34};
         ofb(keyArray, ivArray, messageArray, output, decryptFlag, message.length());        
 
         for(int i=0; i<message.length(); i++){
+            //SECURE CODING:EXP53-CPP. Do not read uninitialized memory
             cout<<output[i];
         }
 
@@ -191,6 +205,7 @@ int main(int argc, char* argv[]){
         // }        
         
     }
+    //SECURE CODING: ERR51-CPP. Handle all exceptions
     catch(...){
         cout<<"Program Terminated!"<<endl;
         exit(EXIT_FAILURE);
