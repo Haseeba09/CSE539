@@ -16,11 +16,12 @@ void KeyExpansion(unsigned char key[4 * Nk], unsigned char w[Nb*(Nr + 1)][4]) {
 	unsigned char temp[4];
 
 	int i = 0;
-
+	int index =0;
 	while (i < Nk) {
 		//w[i] = word(key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3]);
-		for (int byte = 0; i < 4; i++) {
-			w[i][byte] = key[4 * i];
+		for (int byte = 0; byte < 4; byte++) {
+			w[i][byte] = key[index];
+			index++;
 		}
 
 		i += 1;
