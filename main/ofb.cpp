@@ -23,6 +23,8 @@ void ofb(unsigned char key[],unsigned char IV[],unsigned char* message, unsigned
     
     for(int i = 0; i < numberofblocks; i++){
         unsigned char temp[16];
+        unsigned char tempiv[16];
+        memcpy(tempiv, IV, 16);
         if(i == numberofblocks -1 ) { memcpy(temp, message + i*16, lastblock); }
         else { memcpy(temp, message + i*16, 16); }
         //bitwise_xor(IV,key); //aes block encryption function goes here
@@ -37,8 +39,8 @@ void ofb(unsigned char key[],unsigned char IV[],unsigned char* message, unsigned
         }
         //aes block encrypt/decrypt
 
-        if(decrypt){bitwise_xor(IV,key);}
-        else{bitwise_xor(IV,key);}
+        if(decrypt){Cipher(tempiv,tempiv,keyArray);}
+        else{Cipher(tempiv,tempiv,keyArray);}
 
         bitwise_xor(temp,IV);
         if(i == numberofblocks -1 ) { memcpy(outputtext + i*16, temp, lastblock); }
