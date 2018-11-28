@@ -3,7 +3,7 @@
 
 //Multiplication functions
 
-#include "multiplication.h";
+#include "multiplication.h"
 
 //Performs multiplication by 2
 unsigned char multiplyBy2(unsigned char element) {

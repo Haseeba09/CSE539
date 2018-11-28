@@ -1,20 +1,21 @@
 #include <iostream>
 #include <string.h>
 #include <bitset>
+#include <array>
 #include "AES.h"
 #include "ofb.h"
 using namespace std;
 
 
-void bitwise_xor(unsigned char x[], unsigned char y[])
+void bitwise_xor(unsigned char* x, unsigned char* y)
 {
-    int len = (sizeof(x)/sizeof(*x));
+    int len = sizeof(x)/sizeof(*x);
     for(int i = len - 1 ; i >= 0; i--){
         x[i] = (char) (x[i] ^ y[i]);
     }
 }
 
-void ofb(unsigned char key[],unsigned char IV[],unsigned char message[], unsigned char outputtext[], bool decrypt ){    
+void ofb(unsigned char key[],unsigned char IV[],unsigned char* message, unsigned char outputtext[], bool decrypt ){    
     int messageLength = (sizeof(message)/sizeof(*message)) - 1;
     int lastblock = messageLength%16;
     int numberofblocks = messageLength/16 + 1;
@@ -36,8 +37,8 @@ void ofb(unsigned char key[],unsigned char IV[],unsigned char message[], unsigne
         }
         //aes block encrypt/decrypt
 
-        if(decrypt){InvCipher(IV,IV,keyArray);}
-        else{Cipher(IV,IV,keyArray);}
+        if(decrypt){bitwise_xor(IV,key);}
+        else{bitwise_xor(IV,key);}
 
         bitwise_xor(temp,IV);
         if(i == numberofblocks -1 ) { memcpy(outputtext + i*16, temp, lastblock); }
