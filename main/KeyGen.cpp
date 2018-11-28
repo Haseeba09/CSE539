@@ -7,7 +7,7 @@ string keyGen(int p, int q, unsigned long long  x){
     int binaryKey[128];
     int brokenUpBinaryKey[16][8];
     unsigned char partialKey[16];
-
+    //SECURE CODING: MSC50-CPP. Do not use std::rand() for generating pseudorandom numbers
     //Get random bits using BBS
     for(int i=0; i<128; i++){
         unsigned long long  temp = x;

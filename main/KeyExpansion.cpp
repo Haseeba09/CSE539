@@ -21,9 +21,12 @@ void KeyExpansion(unsigned char key[4 * Nk], unsigned char w[Nb*(Nr + 1)][4]) {
 		//w[i] = word(key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3]);
 		for (int byte = 0; byte < 4; byte++) {
 			w[i][byte] = key[index];
+			//SECURE CODING: EXP50-CPP. Do not depend on the order of evaluation 
+			//for side effects
 			index++;
 		}
-
+		//SECURE CODING: EXP50-CPP. Do not depend on the order of evaluation 
+		//for side effects
 		i += 1;
 	}
 
@@ -60,7 +63,8 @@ void KeyExpansion(unsigned char key[4 * Nk], unsigned char w[Nb*(Nr + 1)][4]) {
 		for (int byte = 0; byte < 4; byte++) {
 			w[i][byte] = w[i - Nk][byte] ^ temp[byte];
 		}
-
+		//SECURE CODING: EXP50-CPP. Do not depend on the order of evaluation 
+		//for side effects
 		i = i + 1;
 
 	}

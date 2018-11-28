@@ -35,6 +35,8 @@ void ofb(unsigned char key[],unsigned char IV[],unsigned char* message, unsigned
         for(int i=0; i<4; i++){
             for(int n=0; n<4; n++){
                 keyArray[i][n] = key[index];
+                //SECURE CODING: EXP50-CPP. Do not depend on the order of evaluation 
+		        //for side effects
                 index++;
             }
         }

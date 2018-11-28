@@ -1,3 +1,4 @@
+//SECURE CODING: DCL51-CPP. Do not declare or define a reserved identifier
 #ifndef SUBBYTES_H
 #define SUBBYTES_H
 

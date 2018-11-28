@@ -20,6 +20,8 @@ void Cipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[
 	for (int row = 0; row < (sizeof(state)/sizeof(state[0])); row++) {
 		for (int col = 0; col < (sizeof(state[0])/sizeof(char)); col++) {
 			state[row][col] = in[index];
+			//SECURE CODING: EXP50-CPP. Do not depend on the order of evaluation 
+			//for side effects
 			index++;
 		}
 	}
@@ -42,6 +44,8 @@ void Cipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[
 	for (int row = 0; row < (sizeof(state) / sizeof(state[0])); row++) {
 		for (int col = 0; col < (sizeof(state[0]) / sizeof(char)); col++) {
 			out[index] = state[row][col];
+			//SECURE CODING: EXP50-CPP. Do not depend on the order of evaluation 
+			//for side effects
 			index++;
 		}
 	}
@@ -57,6 +61,8 @@ void InvCipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char wo
 	for (int row = 0; row < (sizeof(state) / sizeof(state[0])); row++) {
 		for (int col = 0; col < (sizeof(state[0]) / sizeof(char)); col++) {
 			state[row][col] = in[index];
+			//SECURE CODING: EXP50-CPP. Do not depend on the order of evaluation 
+			//for side effects
 			index++;
 		}
 	}
@@ -83,6 +89,8 @@ void InvCipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char wo
 	for (int row = 0; row < (sizeof(state) / sizeof(state[0])); row++) {
 		for (int col = 0; col < (sizeof(state[0]) / sizeof(char)); col++) {
 			out[index] = state[row][col];
+			//SECURE CODING: EXP50-CPP. Do not depend on the order of evaluation 
+			//for side effects
 			index++;
 		}
 	}
