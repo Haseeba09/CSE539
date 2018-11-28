@@ -1,4 +1,3 @@
-#pragma once
 #ifndef MIXCOLUMNS_H
 #define MIXCOLUMNS_H
 

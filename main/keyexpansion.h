@@ -1,4 +1,3 @@
-#pragma once
 #ifndef KEYEXPANSION_H
 #define KEYEXPANSION_H
 

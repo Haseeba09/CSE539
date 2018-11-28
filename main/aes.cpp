@@ -2,27 +2,31 @@
 // professor Bazzi
 
 // AES implementation
-
+#include <iostream>
+#include <string>
 #include "AES.h"
 #include "mixcolumns.h"
 #include "shiftrows.h"
 #include "subbytes.h"
 #include "AddRoundKey.h"
+using namespace std;
 
 void Cipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[Nb*(Nr+1)][4]) {
 
 	unsigned char state[4][4];
 
-	//transforming input byte into a 2D block 
+	//transforming input byte into a 2D block
+	int index=0; 
 	for (int row = 0; row < (sizeof(state)/sizeof(state[0])); row++) {
 		for (int col = 0; col < (sizeof(state[0])/sizeof(char)); col++) {
-			state[row][col] = in[row*col];
+			state[row][col] = in[index];
+			index++;
 		}
 	}
 
 	addRoundKey(state, word, 0);
 
-	for(int round = 1; round<=Nr-1; round++) { //round = 1 step 1 to Nr–1
+	for(int round = 1; round<=Nr-1; round++) { //round = 1 step 1 to Nrï¿½1
 		subBytes(state, false); 
 		shiftRows(state, false);
 		MixColumns(state, false);
@@ -34,49 +38,52 @@ void Cipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[
 	addRoundKey(state, word, Nr);
 
 	//transforming 2D block into output byte 
+	index =0;
 	for (int row = 0; row < (sizeof(state) / sizeof(state[0])); row++) {
 		for (int col = 0; col < (sizeof(state[0]) / sizeof(char)); col++) {
-			out[row*col] = state[row][col];
+			out[index] = state[row][col];
+			index++;
 		}
 	}
 }
 
 
-void InvCipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[Nb*(Nr+1)]) {
+void InvCipher(unsigned char in[4*Nb], unsigned char out[4*Nb], unsigned char word[Nb*(Nr+1)][4]) {
 
 	unsigned char state[4][4];
 
 	//transforming input byte into a 2D block 
+	int index =0;
 	for (int row = 0; row < (sizeof(state) / sizeof(state[0])); row++) {
 		for (int col = 0; col < (sizeof(state[0]) / sizeof(char)); col++) {
-			state[row][col] = in[row*col];
+			state[row][col] = in[index];
+			index++;
 		}
 	}
 
-	//AddRoundKey(state, w[10*4, (10 + 1)*4 - 1], false); // See Sec. 5.1.4
+	// word from: Nr*Nb -> (Nr+1)*Nb-1
+	addRoundKey(state, word, Nr*Nb);	//Nr*Nb = 40
 
 	for (int round = Nr-1; round>=1; round--) {//round = Nr - 1 step - 1 downto 1
 
-		shiftRows(state, true); // See Sec. 5.3.1
-
-		subBytes(state, true); // See Sec. 5.3.2
-
-		//AddRoundKey(state, w[i * 4, (i + 1) * 4 - 1], true);
-
-		MixColumns(state, true); // See Sec. 5.3.3
-
+		shiftRows(state, true); 
+		subBytes(state, true); 
+		// words from: round*Nb -> (round+1)*Nb-1
+		addRoundKey(state, word, round*Nb); 
+		MixColumns(state, true); 
 	}
 
 	shiftRows(state, true);
-
 	subBytes(state, true);
-
-	//AddRoundKey(state, word[0, 4 - 1]);
+	//words from: 0 -> Nb-1
+	addRoundKey(state, word, 0);
 
 	//transforming 2D block into output byte 
+	index =0;
 	for (int row = 0; row < (sizeof(state) / sizeof(state[0])); row++) {
 		for (int col = 0; col < (sizeof(state[0]) / sizeof(char)); col++) {
-			out[row*col] = state[row][col];
+			out[index] = state[row][col];
+			index++;
 		}
 	}
 }

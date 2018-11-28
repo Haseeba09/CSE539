@@ -3,8 +3,8 @@
 
 //Mixcolumns functionality
 
-#include "mixcolumns.h";
-#include "multiplication.h";
+#include "mixcolumns.h"
+#include "multiplication.h"
 
 //Function prototypes
 void MixCol(unsigned char(&col)[4]);

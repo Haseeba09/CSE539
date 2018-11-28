@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include "KeyGen.h"
+#include "ofb.h"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ int main(int argc, char* argv[]){
         bool validInput = true;
         string message;
         string key;
+        string iv;
         switch(argc){
             case 1:
                 //get flag for Encrypt vs Decrypt
@@ -105,6 +107,10 @@ int main(int argc, char* argv[]){
                 throw CommandLineException(4,argc-1);
                 break;
         }
+        unsigned char output[message.length()];
+        unsigned char messageArray[message.length()];
+        unsigned char keyArray[16];
+        unsigned char ivArray[16];
         
         //Get or generate the key
 
@@ -132,11 +138,52 @@ int main(int argc, char* argv[]){
                 newKeyFile.close();
             }
         }
-        
-        //TODO: break message up, break key up into 4*4, pass to AES and mop
-        
 
-        cout<<flagString<< " "<<key<<" "<<message<<endl;
+        ifstream ivFile ("iv.txt");
+        if(ivFile){
+            if(ivFile.is_open()){
+                getline(ivFile, iv);
+            }
+            ivFile.close();
+        }
+        else{
+            ofstream newIvFile ("iv.txt");
+            if(newIvFile.is_open()){
+                //generate key
+
+                //these are both large blum primes
+                int prime1 = 5651;
+                int prime2 = 5623;
+                //Need random seed
+                unsigned long long int seed = 21;
+
+                iv = keyGen(prime1, prime2, seed);
+
+                newIvFile << iv;
+                newIvFile.close();
+            }
+        }
+
+        
+        for(int i =0; i<message.length(); i++){
+            messageArray[i] = message[i];
+        }
+        for(int i=0; i<16; i++){
+            keyArray[i] = key[i];
+            ivArray[i] = iv[i];
+        }
+        
+        ofb(keyArray, ivArray, messageArray, output, decryptFlag);        
+
+        for(int i=0; i<message.length(); i++){
+            cout<<output[i];
+        }
+
+        ofb(keyArray, ivArray, output, output, !decryptFlag);
+        cout<<endl;
+        for(int i=0; i<message.length(); i++){
+            cout<<output[i];
+        }
     }
     catch(...){
         cout<<"Program Terminated!"<<endl;

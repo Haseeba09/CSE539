@@ -3,9 +3,9 @@
 
 //KeyExpansion functionality
 
-#include "keyexpansion.h";
-#include "subbytes.h";
-#include "multiplication.h";
+#include "keyexpansion.h"
+#include "subbytes.h"
+#include "multiplication.h"
 
 void SubWord(unsigned char word[4]);
 void RotWord(unsigned char word[4]);
